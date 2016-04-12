@@ -1,27 +1,16 @@
-{% extends 'blog/base.html' %}
+{% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
 {% block content %}
 
-            <div class="row" >
-            <a class="btn btn-primary" href="{% url 'post_edit' pk=post.pk %}">Editar post</a>
-            <a class="btn btn-primary" href="{% url 'post_delete' pk=post.pk %}">Borrar post</a>
-            <p><i>{{ post.author }}</i></p>
-            <p>{{ post.title|upper}}</p>
-            <p>{{ post.text }}</p>
-            </div>
-            <div class="row">
-            <form method="POST" class="post-form">
-            	{% csrf_token %}
-        		{{ form | crispy }}
-        		<button type="submit" class="save btn btn-default">Save</button>
-        	</form>
-        	</div>
-            <div class="row">
-            {% for comment in comments %}
-            	<p>{{ comment.created_date }}</p>
-            	<p>{{ comment.text }}</p>
-            </div>
-            {% endfor %}
+<div class="row" >
+    <a class="btn btn-primary" href="{% url 'post_edit' pk=post.pk %}">- Editar un post -</a>
+    <a class="btn btn-primary" href="{% url 'post_delete' pk=post.pk %}">- Borrar un post -</a>
+    <p><i>{{ post.author }}</i></p>
+    <p>{{ post.title|upper}}</p>
+    <p>{{ post.text }}</p>
+</div>
 
+{% include 'blog/snippets/comments.html' %} 
+            
 {% endblock %}    

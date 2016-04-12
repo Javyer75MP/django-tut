@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.join(BASE_DIR, 'mysite')
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,6 +27,8 @@ SECRET_KEY = 'g7&4frj5kd$ow7#wij@#@izr$@*z7xl2p4a+&f#u$=m2(uvxs='
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+LOGIN_REDIRECT_URL ='/'
 
 
 # Application definition
@@ -59,7 +62,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(PROJECT_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
