@@ -2,14 +2,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-
-<div class="row" >
+{% if request.user == post.author or user.is_superuser %}
     <a class="btn btn-primary" href="{% url 'post_edit' pk=post.pk %}">- Editar un post -</a>
     <a class="btn btn-primary" href="{% url 'post_delete' pk=post.pk %}">- Borrar un post -</a>
+{% endif %}
+<div class="row" >
     <p><i>{{ post.author }}</i></p>
     <p>{{ post.title|upper}}</p>
     <p>{{ post.text }}</p>
 </div>
+
 
 {% include 'blog/snippets/comments.html' %} 
             

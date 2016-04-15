@@ -13,13 +13,42 @@
         <h1>* Blog Django Girls *</h1>
         <p>***********************</p>
         </div>
-        <div class="container-fluid">
-            <div class="alert alert-warning alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Hooooooola!</strong> Bienvenido a Django</div>
-            <h1><a class="newpost" href="{% url 'blog.views.post_new' %}">* Crear un nuevo post</a></h1>
-            {% block content %}
-            {% endblock %}
+         </div>
+        <nav class="navbar navbar-info">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                     <a class="navbar-brand" href="{% url 'post_list' %}">
+                        Django blog
+                     <img alt="Brand" src="...">
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    {% if user.is_authenticated %}
+                    <a type="button" class="btn btn-warning navbar-btn navbar-right" href="{% url 'logout' %}">Logout</a>
+                    {% else %}
+                    <!--<a type="button" class="btn btn-success navbar-btn navbar-right" href="{% url 'login' %}">Login</a>-->
+                    {% include 'snippets/login.html' %}
+                    {% endif %}
+
+                <form class="navbar-form navbar-left" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                    <button type="submit" class="btn btn-warning">Submit</button>
+                     <a type="button" class="btn btn-success navbar-btn navbar-center" href="{% url 'about' %}">Sobre mi</a>
+
+                </form>
+            </div>
+        </nav>
         </div>
+        <div class="container-fluid">
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>Hooooooola!</strong> Bienvenido a Django
+            </div>
+            <h1><a class="newpost" href="{% url 'post_new' %}">* Crear un nuevo post</a></h1>
+        </div>
+{% block content %}
+{% endblock %}
     </body>
 </html>

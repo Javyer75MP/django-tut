@@ -1,48 +1,84 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from .models import Post, Comment
-from .forms import  PostForm, CommentForm
+from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate
+from django.views.generic import ListView, DetailView, CreateView
 
 
-def post_list(request):
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
-    return render(request, 'blog/post_list.html', {'posts' : posts})
+
+#def post_list(request):
+    #posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
+    #return render(request, 'blog/post_list.html', {'posts' : posts})
 
 
-def post_detail(request, pk):
+class PostList(ListView):
+    context_object_name = 'posts'
 
-    post = get_object_or_404(Post, pk=pk)
-    comments = Comment.objects.filter(post=post).order_by('created_date')
+    def get_queryset(self):
+        queryset = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
+        return queryset
 
-    if request.method == "POST":
-        form = CommentForm(request.POST)
 
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.author =request.user
-            comment.post = post
-            comment.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = CommentForm()
+# def post_detail(request, pk):
 
-    return render(request, 'blog/post_detail.html', {'post' : post, 'comments' : comments, 'form' : form})
+#     post = get_object_or_404(Post, pk=pk)
+#     comments = Comment.objects.filter(post=post).order_by('created_date')
+
+#     if request.method == "POST":
+#         form = CommentForm(request.POST)
+
+#         if form.is_valid():
+#             comment = form.save(commit=False)
+#             comment.author =request.user
+#             comment.post = post
+#             comment.save()
+#             return redirect('post_detail', pk=post.pk)
+#     else:
+#         form = CommentForm()
+
+#     return render(request, 'blog/post_detail.html', {'post' : post, 'comments' : comments, 'form' : form})
+
+
+
+class PostDetail(DetailView):
+    model = Post
+    
+
+
+
+# @login_required(login_url='login')
+# def post_new(request):
+#     if request.method == "POST":
+#         form = PostForm(request.POST)
+
+#         if form.is_valid():
+#             post = form.save(commit=False)
+#             post.author =request.user
+#             post.publish() 
+#             return redirect('blog.views.post_detail', pk=post.pk)
+#     else:
+#         form = PostForm()
+#     return render(request, 'blog/post_edit.html', {'form': form})
+
+
+class PostCreate(CreateView):
+    model = Post
+    fields = ['title', 'text']
+    template_name = 'blog/post_edit.html'
+    success_url = '/'
+
+    def form_valid(self, form):
+        post = form.instance
+        post.author = self.request.user
+        post.published_date = timezone.now()
+        return super(PostCreate, self).form_valid(form)
+
+
+
 
 @login_required(login_url='login')
-def post_new(request):
-    if request.method == "POST":
-        form = PostForm(request.POST)
-
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author =request.user
-            post.publish() 
-            return redirect('blog.views.post_detail', pk=post.pk)
-    else:
-        form = PostForm()
-    return render(request, 'blog/post_edit.html', {'form': form})
-
 def post_edit(request, pk):
         post = get_object_or_404(Post, pk=pk)
 
@@ -55,10 +91,15 @@ def post_edit(request, pk):
                 return redirect('blog.views.post_detail', pk=post.pk)
         else:
             form = PostForm(instance=post)
-        return render(request, 'blog/post_edit.html', {'form': form})
+        return render(request, 'blog/post_edit.html', {'form': form, 'post' : post})
 
 @login_required(login_url='login')
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.delete()
     return redirect('post_list')
+
+
+# class PostDelete(DeleteView):
+#     model = Post
+#     template_name

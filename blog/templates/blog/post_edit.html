@@ -2,10 +2,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+{% if request.user.is_authenticated %}
+{% if post %}
+    <h1>Editar un post</h1>
+{% else %}
+    <h1>Nuevo post</h1>
+{% endif%}
 
-<h1>New post</h1>
     <form method="POST" class="post-form">{% csrf_token %}
         {{ form | crispy }}
         <button type="submit" class="save btn btn-default">Save</button>
-        </form>
+     </form>
+{% endif %}
 {% endblock %}
