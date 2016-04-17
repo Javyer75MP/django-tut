@@ -84,25 +84,25 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 # DATABASES = {
-#     'default': {
+#      'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'HOST': 'localhost',
 #         'NAME': 'django_tut',
 #         'USER': 'javier',
 #         'PASSWORD': 'javier',
 #         'ATOMIC_REQUEST': True,
-#     }
-# }
+#      }
+#  }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'javyer75$django-tut',
-        'USER': 'javyer75',
-        'PASSWORD': '33522667Y',
-        'HOST': 'javyer75.mysql.pythonanywhere-services.com',
-    }
-}
+     'default': {
+         'ENGINE': 'django.db.backends.mysql',
+         'NAME': 'javyer75$django-tut',
+         'USER': 'javyer75',
+         'PASSWORD': '33522667y',
+         'HOST': 'javyer75.mysql.pythonanywhere-services.com',
+     }
+ }
 
 
 # Internationalization
