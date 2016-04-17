@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import MySQLdb
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_DIR = os.path.join(BASE_DIR, 'mysite')
@@ -81,14 +83,24 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'HOST': 'localhost',
+#         'NAME': 'django_tut',
+#         'USER': 'javier',
+#         'PASSWORD': 'javier',
+#         'ATOMIC_REQUEST': True,
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
-        'NAME': 'django_tut',
-        'USER': 'javier',
-        'PASSWORD': 'javier',
-        'ATOMIC_REQUEST': True,
+        'NAME': 'javyer75$django-tut',
+        'USER': 'javyer75',
+        'PASSWORD': '33522667Y',
+        'HOST': 'javyer75.mysql.pythonanywhere-services.com',
     }
 }
 
