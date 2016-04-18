@@ -81,26 +81,40 @@ class PostCreate(CreateView):
 
 
 
-@login_required(login_url='login')
-def post_edit(request, pk):
-        post = get_object_or_404(Post, pk=pk)
+# @login_required(login_url='login')
+# def post_edit(request, pk):
+#         post = get_object_or_404(Post, pk=pk)
 
-        if request.method == "POST":
-            form = PostForm(request.POST, instance=post)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.author = request.user
-                post.save()
-                return redirect('post_detail', pk=post.pk)
-        else:
-            form = PostForm(instance=post)
-        return render(request, 'blog/post_edit.html', {'form': form, 'post' : post})
+#         if request.method == "POST":
+#             form = PostForm(request.POST, instance=post)
+#             if form.is_valid():
+#                 post = form.save(commit=False)
+#                 post.author = request.user
+#                 post.save()
+#                 return redirect('post_detail', pk=post.pk)
+#         else:
+#             form = PostForm(instance=post)
+#         return render(request, 'blog/post_edit.html', {'form': form, 'post' : post})
+
+
+class PostEdit(UpdateView):
+    model = Post
+    fields = ['title', 'text']
+    template_name = 'blog/post_edit.html'
+
+    def get_success_url(self):
+        return reverse('post_detail', kwargs={'pk': self.objects.pk })
+
+
+
 
 @login_required(login_url='login')
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.delete()
     return redirect('post_list')
+
+
 
 
 # class PostDelete(DeleteView):
