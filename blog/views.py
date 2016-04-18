@@ -13,6 +13,12 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
     #posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
     #return render(request, 'blog/post_list.html', {'posts' : posts})
 
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
+
 
 class PostList(ListView):
     context_object_name = 'posts'
