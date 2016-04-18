@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse
 from .models import Post, Comment
 from .forms import PostForm, CommentForm
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 
 
@@ -76,7 +76,7 @@ class PostCreate(CreateView):
         return super(PostCreate, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse('post_detail', kwargs={'pk': self.objects.pk })
+        return reverse('post_detail', kwargs={'pk': self.object.pk })
 
 
 
@@ -103,20 +103,22 @@ class PostEdit(UpdateView):
     template_name = 'blog/post_edit.html'
 
     def get_success_url(self):
-        return reverse('post_detail', kwargs={'pk': self.objects.pk })
+        return reverse('post_detail', kwargs={'pk': self.object.pk })
 
 
 
 
-@login_required(login_url='login')
-def post_delete(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    post.delete()
-    return redirect('post_list')
+# @login_required(login_url='login')
+# def post_delete(request, pk):
+#     post = get_object_or_404(Post, pk=pk)
+#     post.delete()
+#     return redirect('post_list')
 
 
 
+class PostDelete(DeleteView):
+    model = Post
 
-# class PostDelete(DeleteView):
-#     model = Post
-#     template_name
+    def get_success_url(self):
+        return reverse('post_list')
+    
