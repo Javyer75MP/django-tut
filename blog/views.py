@@ -1,16 +1,23 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
-from .models import Post, Comment
-from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
-from django.views.generic import ListView, DetailView, CreateView
+from django.utils import timezone
+from django.core.urlresolvers import reverse
+from .models import Post, Comment
+from .forms import PostForm, CommentForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 
 
 #def post_list(request):
     #posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
     #return render(request, 'blog/post_list.html', {'posts' : posts})
+
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
 
 
 class PostList(ListView):
@@ -44,10 +51,29 @@ class PostList(ListView):
 
 class PostDetail(DetailView):
     model = Post
-    
 
+    def get_context_data(self, **kwargs):
+        context = super(PostDetail, self).get_context_data(**kwargs)
+        context['comments'] = Comment.objects.filter(post=self.object).order_by('created_date')
+        context['forms'] = CommentForm()
+        return context
 
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            form = CommentForm(request.POST)
+            post = self.get_object()
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.author =request.user
+                comment.post = post
+                comment = save()
 
+                return redirect('post_detail.html', pk=post.pk)
+            else:
+
+                return redirect('login')
+
+            
 # @login_required(login_url='login')
 # def post_new(request):
 #     if request.method == "POST":
@@ -67,39 +93,57 @@ class PostCreate(CreateView):
     model = Post
     fields = ['title', 'text']
     template_name = 'blog/post_edit.html'
-    success_url = '/'
+   
 
     def form_valid(self, form):
-        post = form.instance
-        post.author = self.request.user
-        post.published_date = timezone.now()
+        form.instance.author = self.request.user
+        form.instance.published_date = timezone.now()
         return super(PostCreate, self).form_valid(form)
 
+    def get_success_url(self):
+        return reverse('post_detail', kwargs={'pk': self.object.pk })
 
 
 
-@login_required(login_url='login')
-def post_edit(request, pk):
-        post = get_object_or_404(Post, pk=pk)
 
-        if request.method == "POST":
-            form = PostForm(request.POST, instance=post)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.author = request.user
-                post.save()
-                return redirect('blog.views.post_detail', pk=post.pk)
-        else:
-            form = PostForm(instance=post)
-        return render(request, 'blog/post_edit.html', {'form': form, 'post' : post})
+# @login_required(login_url='login')
+# def post_edit(request, pk):
+#         post = get_object_or_404(Post, pk=pk)
 
-@login_required(login_url='login')
-def post_delete(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    post.delete()
-    return redirect('post_list')
+#         if request.method == "POST":
+#             form = PostForm(request.POST, instance=post)
+#             if form.is_valid():
+#                 post = form.save(commit=False)
+#                 post.author = request.user
+#                 post.save()
+#                 return redirect('post_detail', pk=post.pk)
+#         else:
+#             form = PostForm(instance=post)
+#         return render(request, 'blog/post_edit.html', {'form': form, 'post' : post})
 
 
-# class PostDelete(DeleteView):
-#     model = Post
-#     template_name
+class PostEdit(UpdateView):
+    model = Post
+    fields = ['title', 'text']
+    template_name = 'blog/post_edit.html'
+
+    def get_success_url(self):
+        return reverse('post_detail', kwargs={'pk': self.object.pk })
+
+
+
+
+# @login_required(login_url='login')
+# def post_delete(request, pk):
+#     post = get_object_or_404(Post, pk=pk)
+#     post.delete()
+#     return redirect('post_list')
+
+
+
+class PostDelete(DeleteView):
+    model = Post
+
+    def get_success_url(self):
+        return reverse('post_list')
+    
